@@ -1,0 +1,138 @@
+import pandas as pd
+
+data = pd.read_excel("C:\\Users\\HP\\Downloads\\machine_sensor_data (1).xlsx")
+print(data.head())
+!pip install pandas numpy scikit-learn matplotlib openpyxl
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+X_raw = data[["temperature", "vibration", "pressure"]]
+y_raw = data["state"]
+scaler = MinMaxScaler()
+X_scaled = scaler.fit_transform(X_raw)
+
+X_scaled[:5]
+window_size = 5
+X, y = [], []
+
+for i in range(len(X_scaled) - window_size):
+    X.append(X_scaled[i:i + window_size].flatten())
+    y.append(y_raw.iloc[i + window_size])
+
+X = np.array(X)
+y = np.array(y)
+
+print("Input shape:", X.shape)
+print("Label shape:", y.shape)
+window_size = 5
+X, y = [], []
+
+for i in range(len(X_scaled) - window_size):
+    X.append(X_scaled[i:i + window_size].flatten())
+    y.append(y_raw.iloc[i + window_size])
+  window_size = 5
+X, y = [], []
+
+for i in range(len(X_scaled) - window_size):
+    X.append(X_scaled[i:i + window_size].flatten())
+    y.append(y_raw.iloc[i + window_size])
+
+X = np.array(X)
+y = np.array(y)
+
+print("Input shape:", X.shape)
+print("Label shape:", y.shape)
+  model = RandomForestClassifier(
+    n_estimators=100,
+    max_depth=8,
+    random_state=42
+)
+
+model.fit(X_train, y_train)
+  y_pred = model.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+print("Model Accuracy:", round(accuracy * 100, 2), "%")
+
+print("\nClassification Report:")
+print(classification_report(
+    y_test, y_pred,
+    target_names=["Normal", "Warning", "Failure"]
+))
+sample = X_test[0].reshape(1, -1)
+prediction = model.predict(sample)
+
+states = ["Normal", "Warning", "Failure"]
+print("Predicted Machine State:", states[prediction[0]])
+  data["state"].value_counts().plot(kind="bar")
+plt.title("Machine State Distribution")
+plt.xlabel("State")
+plt.ylabel("Count")
+plt.show()
+  from sklearn.metrics import confusion_matrix
+import seaborn as sns
+
+cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(6,5))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=["Normal", "Warning", "Failure"],
+            yticklabels=["Normal", "Warning", "Failure"])
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title("Confusion Matrix")
+plt.show()
+  importances = model.feature_importances_
+feature_names = []
+
+# Since we used time-series windows, name features like sensor1_t0, sensor2_t0...
+sensors = ["temperature", "vibration", "pressure"]
+for t in range(5):  # window_size
+    for s in sensors:
+        feature_names.append(f"{s}_t{t}")
+
+# Plot
+plt.figure(figsize=(10,5))
+plt.barh(feature_names, importances)
+plt.xlabel("Importance")
+plt.ylabel("Feature")
+plt.title("Feature Importance - Random Forest")
+plt.show()
+  plt.figure(figsize=(12,6))
+plt.plot(data["temperature"], label="Temperature")
+plt.plot(data["vibration"]*100, label="Vibration (scaled)")
+plt.plot(data["pressure"], label="Pressure")
+plt.scatter(range(len(data)), data["state"]*30, color="red", label="State*30", alpha=0.5)
+plt.title("Sensor Readings with Machine State")
+plt.xlabel("Time Step")
+plt.ylabel("Sensor Values / State")
+plt.legend()
+plt.show()
+  import joblib
+
+joblib.dump(model, "machine_failure_model.pkl")
+print("Model saved!")
+  loaded_model = joblib.load("machine_failure_model.pkl")
+y_pred_loaded = loaded_model.predict(X_test)
+print("Loaded model accuracy:", accuracy_score(y_test, y_pred_loaded))
+
+
+
+
+
+
+
+
+
+
+
+
+X = np.array(X)
+y = np.array(y)
+
+print("Input shape:", X.shape)
+print("Label shape:", y.shape)
